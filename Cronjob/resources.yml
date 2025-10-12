@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-cronjob
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: job-job
+              image: job:v1.0.0
+          resources:
+            resources:
+            limits:
+              cpu: "200m"
+              memory: "500Mi"
+            requests:
+              cpu: "200m"
+              memory: "500Mi"
+          restartPolicy: Never
+      parallelism: 1
+  schedule: "* * * * *"
