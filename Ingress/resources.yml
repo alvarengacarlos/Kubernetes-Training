@@ -1,0 +1,58 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: doc-ingress
+  labels:
+    app: doc-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: doc-service
+                port:
+                  number: 8000
+            pathType: Prefix
+            path: "/"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: doc-service
+spec:
+  selector:
+    app: doc-deployment
+  ports:
+    - port: 8000
+      targetPort: 80
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doc-deployment
+spec:
+  selector:
+    matchLabels:
+      app: doc-deployment
+  template:
+    metadata:
+      labels:
+        app: doc-deployment
+    spec:
+      containers:
+        - name: doc-deployment
+          image: doc:v1.0.0
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "250Mi"
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+  replicas: 1

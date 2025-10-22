@@ -6,6 +6,7 @@ Simple examples to training Kubernetes.
 > - Minikube
 > - Bash
 > - Kubectl CLI
+> - Ingress Minikube Addon
 
 Build images:
 ```bash
