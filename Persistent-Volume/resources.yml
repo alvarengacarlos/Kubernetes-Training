@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: doc-pv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  mountOptions:
+    - hard
+  volumeMode: Filesystem
+  hostPath:
+    path: /srv
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: doc-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  selector:
+    matchLabels:
+      name: doc-pv
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: doc-pod
+spec:
+  containers:
+    - name: doc-pod
+      image: doc:v1.0.0
+      ports:
+        - containerPort: 80
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "250Mi"
+        requests:
+          cpu: "10m"
+          memory: "50Mi"
+      volumeMounts:
+        - mountPath: "/srv"
+          name: doc-pod-pv
+  volumes:
+    - name: doc-pod-pv
+      persistentVolumeClaim:
+        claimName: doc-pv-claim
